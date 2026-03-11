@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const BACKEND_URL = "https://culturalfoodcongoleseday.onrender.com";
+const BACKEND_URL = "https://culturalfooddaybackend.onrender.com";
 
 const Admin = () => {
   const [orders, setOrders] = useState([]);
