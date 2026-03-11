@@ -4,15 +4,16 @@ import { open } from 'sqlite';
 import cors from 'cors';
 
 const app = express();
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 
+// Base SQLite
 const dbPromise = open({
   filename: './db.sqlite',
   driver: sqlite3.Database
 });
 
-// Créer la table commandes si elle n'existe pas
+// Création table orders
 (async () => {
   const db = await dbPromise;
   await db.run(`
@@ -35,15 +36,33 @@ app.post('/order', async (req, res) => {
     'INSERT INTO orders (item, amount, transaction_id) VALUES (?, ?, ?)',
     [item, amount, transaction_id]
   );
-  res.json({ message: 'Order added!' });
+  res.json({ message: 'Commande ajoutée !' });
 });
 
-// Lister toutes les commandes
+// Récupérer toutes les commandes
 app.get('/orders', async (req, res) => {
   const db = await dbPromise;
   const orders = await db.all('SELECT * FROM orders ORDER BY created_at DESC');
   res.json(orders);
 });
 
+// Récupérer seulement les commandes pending
+app.get('/pending-orders', async (req, res) => {
+  const db = await dbPromise;
+  const orders = await db.all('SELECT * FROM orders WHERE status = "pending" ORDER BY created_at DESC');
+  res.json(orders);
+});
+
+// Valider une transaction
+app.post('/validate', async (req, res) => {
+  const db = await dbPromise;
+  const { id, transaction_id } = req.body;
+  await db.run(
+    'UPDATE orders SET transaction_id = ?, status = ? WHERE id = ?',
+    [transaction_id, 'paid', id]
+  );
+  res.json({ message: 'Transaction validée !' });
+});
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
