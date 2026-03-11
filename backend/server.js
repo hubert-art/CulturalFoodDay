@@ -36,7 +36,7 @@ app.post('/order', async (req, res) => {
     'INSERT INTO orders (item, amount, transaction_id) VALUES (?, ?, ?)',
     [item, amount, transaction_id]
   );
-  res.json({ message: 'Commande ajoutée !' });
+  res.json({ message: 'Order added!' });
 });
 
 // Récupérer toutes les commandes
