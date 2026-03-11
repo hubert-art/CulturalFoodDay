@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { menuItems } from './data';
 
-const BACKEND_URL = '';
+const BACKEND_URL = 'https://culturalfooddaybackend.onrender.com';
 
 function App() {
   const [orders, setOrders] = useState([]);
